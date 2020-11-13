@@ -34,7 +34,7 @@ bool ModuleSceneIntro::Start()
 
 	//Sensors//
 	//die sensor
-	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
+	dieSensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 	//bumpers boost
 	bumperLeft = App->physics->CreateRectangleSensor(147, 595, 5, 85);
 	bumperLeft->body->SetTransform(bumperLeft->body->GetPosition(), DEGTORAD * (-22));
@@ -261,17 +261,17 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	int x, y;
 
-	App->audio->PlayFx(bonus_fx);
-
 	if (bodyB == bumperLeft)
 	{
 		p2List_item<PhysBody*>* c = ballList.getFirst();
 		c->data->body->SetLinearVelocity(b2Vec2(22, -22));
+		App->audio->PlayFx(bonus_fx);
 	}
 	if (bodyB == bumperRight)
 	{
 		p2List_item<PhysBody*>* c = ballList.getFirst();
 		c->data->body->SetLinearVelocity(b2Vec2(-22, -22));
+		App->audio->PlayFx(bonus_fx);
 	}
 	if (bodyB == boostFireHydrant || bodyB == boostHouse ||
 		bodyB == boostMask || bodyB == boostTermometer)
@@ -284,12 +284,14 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			if (x > x - 22)
 			{
 				//down right
-				c->data->body->SetLinearVelocity(b2Vec2(10, 10));
+				c->data->body->SetLinearVelocity(b2Vec2(15, 15));
+				App->audio->PlayFx(bonus_fx);
 			}
 			else
 			{
 				//down left
-				c->data->body->SetLinearVelocity(b2Vec2(-10, 10));
+				c->data->body->SetLinearVelocity(b2Vec2(-15, 15));
+				App->audio->PlayFx(bonus_fx);
 			}
 		}
 		else
@@ -297,26 +299,16 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			if (x > x - 22)
 			{
 				//up right
-				c->data->body->SetLinearVelocity(b2Vec2(10, -10));
+				c->data->body->SetLinearVelocity(b2Vec2(15, -15));
+				App->audio->PlayFx(bonus_fx);
 			}
 			else
 			{
 				//up left
-				c->data->body->SetLinearVelocity(b2Vec2(-10, -10));
+				c->data->body->SetLinearVelocity(b2Vec2(-15, -15));
+				App->audio->PlayFx(bonus_fx);
 			}
 		}
 	}
 	
-	/*
-	if(bodyA)
-	{
-		bodyA->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
-	}
-
-	if(bodyB)
-	{
-		bodyB->GetPosition(x, y);
-		App->renderer->DrawCircle(x, y, 50, 100, 100, 100);
-	}*/
 }

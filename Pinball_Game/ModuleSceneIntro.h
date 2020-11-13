@@ -38,7 +38,7 @@ public:
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> polligons;
 
-	PhysBody* sensor;
+	PhysBody* dieSensor;
 	PhysBody* entryLevel;
 	PhysBody* entrySlide;
 	PhysBody* exitSlide;
@@ -51,6 +51,8 @@ public:
 	PhysBody* boostHouse;
 	PhysBody* boostMask;
 	PhysBody* boostTermometer;
+	PhysBody* leftLifeSavour;
+	PhysBody* rightLifeSavour;
 	
 	
 	
