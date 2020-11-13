@@ -5,6 +5,12 @@
 #include "Globals.h"
 
 class PhysBody;
+enum currentArea
+{
+	START = 1,
+	FLOOR,
+	SLIDE
+};
 
 class ModuleSceneIntro : public Module
 {
@@ -18,28 +24,48 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
 	//flippers
-	SDL_Rect flipperRight = {};
-	SDL_Rect flipperLeft = {};
-	SDL_Rect flipperRightUp = {};
+	SDL_Rect flipperRight;
+	SDL_Rect flipperLeft;
+	SDL_Rect flipperRightUp;
+	SDL_Rect playerBall;
 
 	//background
-	SDL_Rect bgRect = { 0,0,533,798 };
+	SDL_Rect bgRect;
 
 public:
 	p2List<PhysBody*> circles;
+	p2List<PhysBody*> ballList;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> polligons;
 
 	PhysBody* sensor;
+	PhysBody* entryLevel;
+	PhysBody* entrySlide;
+	PhysBody* exitSlide;
+	PhysBody* exitSlide2;
+	PhysBody* boostSlide;
+	PhysBody* boostStairs;
+	PhysBody* bumperLeft;
+	PhysBody* bumperRight;
+	PhysBody* boostFireHydrant;
+	PhysBody* boostHouse;
+	PhysBody* boostMask;
+	PhysBody* boostTermometer;
+	
+	
+	
 	bool sensed;
 
-	SDL_Texture* circle;
 	SDL_Texture* box;
+	SDL_Texture* ball;
 	SDL_Texture* rick;
 	SDL_Texture* background;
+	SDL_Texture* pinballSet;
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;
+
+	currentArea currentLvl = START;
 
 
 	//Poligon Shapes
@@ -239,19 +265,20 @@ public:
 	75, 557
 	};
 
-	int LRight[26] = {
-	416, 566,
-	416, 624,
-	412, 641,
-	397, 654,
-	332, 693,
-	338, 714,
-	366, 700,
-	395, 679,
-	413, 666,
-	425, 643,
-	425, 553,
-	416, 554,
-	416, 561
+	int LRight[28] = {
+	417, 549,
+	425, 549,
+	425, 641,
+	422, 650,
+	417, 662,
+	408, 672,
+	341, 713,
+	333, 710,
+	330, 702,
+	331, 693,
+	379, 665,
+	410, 644,
+	417, 632,
+	417, 558
 	};
 };
