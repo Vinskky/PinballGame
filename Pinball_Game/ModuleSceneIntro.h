@@ -5,7 +5,7 @@
 #include "Globals.h"
 
 class PhysBody;
-enum currentArea
+enum Area
 {
 	START = 1,
 	FLOOR,
@@ -22,6 +22,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+
+	void UpdateLevel(Area lvlToChange);
 
 	//flippers
 	SDL_Rect flipperRight;
@@ -42,7 +44,6 @@ public:
 	PhysBody* entryLevel;
 	PhysBody* entrySlide;
 	PhysBody* exitSlide;
-	PhysBody* exitSlide2;
 	PhysBody* boostSlide;
 	PhysBody* boostStairs;
 	PhysBody* bumperLeft;
@@ -67,7 +68,7 @@ public:
 	p2Point<int> ray;
 	bool ray_on;
 
-	currentArea currentLvl = START;
+	Area currentLvl;
 
 
 	//Poligon Shapes
@@ -282,5 +283,15 @@ public:
 	410, 644,
 	417, 632,
 	417, 558
+	};
+
+	int closeEntrance[14] = {
+	319, 96,
+	294, 69,
+	270, 53,
+	295, 40,
+	340, 52,
+	354, 79,
+	336, 88
 	};
 };

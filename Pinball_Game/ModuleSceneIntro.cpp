@@ -12,6 +12,7 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	background = ball = box = rick = NULL;
 	ray_on = false;
 	sensed = false;
+	currentLvl = START;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -45,8 +46,8 @@ bool ModuleSceneIntro::Start()
 	boostMask = App->physics->CreateCircleSensor(288, 265, 23);
 	boostTermometer = App->physics->CreateCircleSensor(203, 365, 23);
 	//level changer sensors
-	entryLevel = App->physics->CreateRectangleSensor(330, 79, 15, 15);
-	entrySlide = App->physics->CreateRectangleSensor(155, 371, 15, 15);
+	entryLevel = App->physics->CreateRectangleSensor(250, 100, 100, 15);
+	entrySlide = App->physics->CreateRectangleSensor(145, 350, 15, 15);
 	exitSlide = App->physics->CreateRectangleSensor(396, 546, 15, 15);
 	boostSlide = App->physics->CreateRectangleSensor(225, 50, 15, 15);
 	//live saviours
@@ -91,13 +92,16 @@ bool ModuleSceneIntro::Start()
 
 	//Starting polligons
 	//outsidebounds
-	polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
-	polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
-	polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
-	polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
-	polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
-	polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
-
+	polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112, "Outside"));
+	polligons.add(App->physics->CreateChain(0, 0, innerBound, 90, "Inner"));
+	polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18, "LeftB"));
+	polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16, "RightB"));
+	polligons.add(App->physics->CreateChain(0, 0, LLeft, 26, "Lleft"));
+	polligons.add(App->physics->CreateChain(0, 0, LRight, 28,"Lright"));
+	polligons.add(App->physics->CreateChain(0, 0, slide, 92,"Slide"));
+	polligons.getLast()->data->body->SetActive(false);
+	polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14,"Entrance"));
+	polligons.getLast()->data->body->SetActive(false);
 
 	//create joints
 	b2RevoluteJointDef revJoint_l;
@@ -283,7 +287,6 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyB == boostFireHydrant || bodyB == boostHouse ||
 		bodyB == boostMask || bodyB == boostTermometer)
 	{
-		int x, y;
 		p2List_item<PhysBody*>* c = ballList.getFirst();
 		c->data->GetPosition(x, y);
 		if(y > y - 22) // radius of bouncers
@@ -316,6 +319,86 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 				App->audio->PlayFx(bonus_fx);
 			}
 		}
+		
 	}
-	
+	if (bodyB == entryLevel && currentLvl == START)
+	{
+		UpdateLevel(FLOOR);
+	}
+	if (bodyB == entrySlide && currentLvl == FLOOR)
+	{
+		UpdateLevel(SLIDE);
+	}
+	if (bodyB == entrySlide && currentLvl == SLIDE)
+	{
+		UpdateLevel(FLOOR);
+	}
+	if (bodyB == exitSlide && currentLvl == SLIDE)
+	{
+		UpdateLevel(FLOOR);
+	}
+}
+
+void ModuleSceneIntro::UpdateLevel(Area lvlToChange)
+{
+	switch (lvlToChange)
+	{
+		case START:
+		{
+
+		}
+			break;
+		case FLOOR:
+		{
+			p2List_item<PhysBody*>* c = polligons.getFirst();
+
+			while (c != NULL)
+			{
+				if (currentLvl == START)
+				{
+					if (strcmp(c->data->name.GetString(), "Entrance") == 0)
+					{
+						c->data->body->SetActive(true);
+					}
+				}
+				else if (currentLvl == SLIDE)
+				{
+					if (strcmp(c->data->name.GetString(), "Slide") == 0)
+					{
+						c->data->body->SetActive(false);
+					}
+					else
+					{
+						c->data->body->SetActive(true);
+					}
+				}
+				c = c->next;
+			}
+
+			currentLvl = FLOOR;
+		}
+			break;
+		case SLIDE:
+		{
+			p2List_item<PhysBody*>* c = polligons.getFirst();
+
+			while(c != NULL)
+			{
+				if (strcmp(c->data->name.GetString(), "Slide") == 0)
+				{
+					c->data->body->SetActive(true);
+				}
+				else
+				{
+					c->data->body->SetActive(false);
+				}
+				c = c->next;
+			}
+
+			currentLvl = SLIDE;
+		}
+			break;
+		default:
+			break;
+	}
 }
