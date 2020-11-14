@@ -32,19 +32,26 @@ bool ModuleSceneIntro::Start()
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
-	//Sensors//
 	//die sensor
 	dieSensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
-	//bumpers boost
+	//bumpers boost sensor
 	bumperLeft = App->physics->CreateRectangleSensor(147, 595, 5, 85);
 	bumperLeft->body->SetTransform(bumperLeft->body->GetPosition(), DEGTORAD * (-22));
 	bumperRight = App->physics->CreateRectangleSensor(355, 595, 5, 85);
 	bumperRight->body->SetTransform(bumperRight->body->GetPosition(), DEGTORAD * (22));
-	//circles boost
+	//circles boost sensor
 	boostFireHydrant = App->physics->CreateCircleSensor(208, 222, 23);
 	boostHouse = App->physics->CreateCircleSensor(279, 194, 23);
 	boostMask = App->physics->CreateCircleSensor(288, 265, 23);
 	boostTermometer = App->physics->CreateCircleSensor(203, 365, 23);
+	//level changer sensors
+	entryLevel = App->physics->CreateRectangleSensor(330, 79, 15, 15);
+	entrySlide = App->physics->CreateRectangleSensor(155, 371, 15, 15);
+	exitSlide = App->physics->CreateRectangleSensor(396, 546, 15, 15);
+	boostSlide = App->physics->CreateRectangleSensor(225, 50, 15, 15);
+	//live saviours
+	leftLifeSavour = App->physics->CreateRectangleSensor(59, 733, 28, 8);
+	rightLifeSavour = App->physics->CreateRectangleSensor(445, 733, 28, 8);
 
 	//create flippers
 	boxes.add(App->physics->CreateRectangle(190, 710, 60, 18));
@@ -96,7 +103,7 @@ bool ModuleSceneIntro::Start()
 	b2RevoluteJointDef revJoint_l;
 	revJoint_l.bodyA = boxes.getFirst()->data->body;
 	revJoint_l.bodyB = circles.getFirst()->data->body;
-	revJoint_l.localAnchorA.Set(PIXEL_TO_METERS(-18), PIXEL_TO_METERS(0));
+	revJoint_l.localAnchorA.Set(PIXEL_TO_METERS(-22), PIXEL_TO_METERS(0));
 	revJoint_l.localAnchorB.Set(0, 0);
 	revJoint_l.lowerAngle = DEGTORAD * (-30);
 	revJoint_l.referenceAngle = 0;
@@ -107,7 +114,7 @@ bool ModuleSceneIntro::Start()
 	b2RevoluteJointDef revJoint_r;
 	revJoint_r.bodyA = boxes.getFirst()->next->data->body;
 	revJoint_r.bodyB = circles.getFirst()->next->data->body;
-	revJoint_r.localAnchorA.Set(PIXEL_TO_METERS(18), PIXEL_TO_METERS(0));
+	revJoint_r.localAnchorA.Set(PIXEL_TO_METERS(22), PIXEL_TO_METERS(0));
 	revJoint_r.localAnchorB.Set(0, 0);
 	revJoint_r.lowerAngle = DEGTORAD * (-30);
 	revJoint_r.referenceAngle = 0;
