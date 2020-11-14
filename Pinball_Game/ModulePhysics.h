@@ -2,7 +2,6 @@
 #include "Module.h"
 #include "Globals.h"
 #include "Box2D/Box2D/Box2D.h"
-#include "SString.h"
 
 #define GRAVITY_X 0.0f
 #define GRAVITY_Y -7.0f
@@ -29,7 +28,6 @@ public:
 	int width, height;
 	b2Body* body;
 	Module* listener;
-	SString name;
 };
 
 // Module --------------------------------------
@@ -48,8 +46,9 @@ public:
 	PhysBody* CreateCircleSensor(int x, int y, int radius);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
-	PhysBody* CreateChain(int x, int y, int* points, int size, char* name);
+	PhysBody* CreateChain(int x, int y, int* points, int size);
 
+	b2World* GetWorld()const;
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 

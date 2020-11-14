@@ -23,8 +23,6 @@ public:
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
-	void UpdateLevel(Area lvlToChange);
-
 	//flippers
 	SDL_Rect flipperRight;
 	SDL_Rect flipperLeft;
@@ -48,16 +46,14 @@ public:
 	PhysBody* boostStairs;
 	PhysBody* bumperLeft;
 	PhysBody* bumperRight;
-	PhysBody* boostFireHydrant;
-	PhysBody* boostHouse;
-	PhysBody* boostMask;
-	PhysBody* boostTermometer;
 	PhysBody* leftLifeSavour;
 	PhysBody* rightLifeSavour;
 	
-	
-	
 	bool sensed;
+	bool dead = false;
+	bool lBlock = false;
+	bool rBlock = false;
+	int lives = 3;
 
 	SDL_Texture* box;
 	SDL_Texture* ball;
@@ -293,5 +289,19 @@ public:
 	340, 52,
 	354, 79,
 	336, 88
+	};
+
+	int leftBlock[8] = {
+	84, 710,
+	44, 681,
+	44, 703,
+	76, 723
+	};
+
+	int rightBlock[8] = {
+	460, 714,
+	460, 682,
+	420, 709,
+	426, 727
 	};
 };

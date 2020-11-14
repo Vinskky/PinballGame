@@ -41,12 +41,12 @@ bool ModuleSceneIntro::Start()
 	bumperRight = App->physics->CreateRectangleSensor(355, 595, 5, 85);
 	bumperRight->body->SetTransform(bumperRight->body->GetPosition(), DEGTORAD * (22));
 	//circles boost sensor
-	boostFireHydrant = App->physics->CreateCircleSensor(208, 222, 23);
+	/*boostFireHydrant = App->physics->CreateCircleSensor(208, 222, 23);
 	boostHouse = App->physics->CreateCircleSensor(279, 194, 23);
 	boostMask = App->physics->CreateCircleSensor(288, 265, 23);
-	boostTermometer = App->physics->CreateCircleSensor(203, 365, 23);
+	boostTermometer = App->physics->CreateCircleSensor(203, 365, 23);*/
 	//level changer sensors
-	entryLevel = App->physics->CreateRectangleSensor(250, 100, 100, 15);
+	entryLevel = App->physics->CreateRectangleSensor(200, 78, 15, 15);
 	entrySlide = App->physics->CreateRectangleSensor(145, 350, 15, 15);
 	exitSlide = App->physics->CreateRectangleSensor(396, 546, 15, 15);
 	boostSlide = App->physics->CreateRectangleSensor(225, 50, 15, 15);
@@ -67,13 +67,13 @@ bool ModuleSceneIntro::Start()
 
 	//Create Central Circles
 	circles.add(App->physics->CreateCircle(208, 222, 22));
-	circles.getLast()->data->body->SetType(b2_staticBody);
+	circles.getLast()->data->body->SetType(b2_kinematicBody);
 	circles.add(App->physics->CreateCircle(279, 194, 22));
-	circles.getLast()->data->body->SetType(b2_staticBody);
+	circles.getLast()->data->body->SetType(b2_kinematicBody);
 	circles.add(App->physics->CreateCircle(288, 265, 22));
-	circles.getLast()->data->body->SetType(b2_staticBody);
+	circles.getLast()->data->body->SetType(b2_kinematicBody);
 	circles.add(App->physics->CreateCircle(203, 365, 22));
-	circles.getLast()->data->body->SetType(b2_staticBody);
+	circles.getLast()->data->body->SetType(b2_kinematicBody);
 
 	//Upper boxes
 	boxes.add(App->physics->CreateRectangle(231, 118, 11, 33));
@@ -92,16 +92,12 @@ bool ModuleSceneIntro::Start()
 
 	//Starting polligons
 	//outsidebounds
-	polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112, "Outside"));
-	polligons.add(App->physics->CreateChain(0, 0, innerBound, 90, "Inner"));
-	polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18, "LeftB"));
-	polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16, "RightB"));
-	polligons.add(App->physics->CreateChain(0, 0, LLeft, 26, "Lleft"));
-	polligons.add(App->physics->CreateChain(0, 0, LRight, 28,"Lright"));
-	polligons.add(App->physics->CreateChain(0, 0, slide, 92,"Slide"));
-	polligons.getLast()->data->body->SetActive(false);
-	polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14,"Entrance"));
-	polligons.getLast()->data->body->SetActive(false);
+	polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
+	polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
+	polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
+	polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+	polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
+	polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
 
 	//create joints
 	b2RevoluteJointDef revJoint_l;
@@ -166,12 +162,12 @@ update_status ModuleSceneIntro::Update()
 		ray.y = App->input->GetMouseY();
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	/*if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		ballList.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 11));
 		ballList.getLast()->data->listener = this;
 		ballList.getLast()->data->body->SetBullet(true);
-	}
+	}*/
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
@@ -264,7 +260,65 @@ update_status ModuleSceneIntro::Update()
 		if(normal.x != 0.0f)
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
+
 	
+	if (currentLvl == START)
+	{
+		int num = polligons.count();
+		for (int i = 0; i < num; i++)
+		{
+			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+			polligons.del(polligons.getLast());
+		}
+		polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
+		polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
+		polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
+		polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+		polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
+		polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
+	}
+	else if(currentLvl == FLOOR)
+	{
+		int num = polligons.count();
+		for (int i = 0; i < num; i++)
+		{
+			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+			polligons.del(polligons.getLast());
+		}
+		polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
+		polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
+		polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
+		polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+		polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
+		polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
+		polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14));
+		if(lBlock)
+			polligons.add(App->physics->CreateChain(0, 0, leftBlock, 8));
+		if(rBlock)
+			polligons.add(App->physics->CreateChain(0, 0, rightBlock, 8));
+
+	}
+	else if (currentLvl == SLIDE)
+	{
+		int num = polligons.count();
+		for (int i = 0; i < num; i++)
+		{
+			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+			polligons.del(polligons.getLast());
+		}
+		polligons.add(App->physics->CreateChain(0, 0, slide, 92));
+	}
+
+	if (dead)
+	{
+		ballList.getLast()->data->body->SetLinearVelocity(b2Vec2(0, 0));
+		ballList.getLast()->data->body->SetAngularVelocity(0);
+		ballList.getLast()->data->body->SetTransform(b2Vec2( PIXEL_TO_METERS(508), PIXEL_TO_METERS(706)), ballList.getLast()->data->GetRotation());
+		dead = false;
+		lBlock = false;
+		rBlock = false;
+		currentLvl = START;
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -284,121 +338,51 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		c->data->body->SetLinearVelocity(b2Vec2(-22, -22));
 		App->audio->PlayFx(bonus_fx);
 	}
-	if (bodyB == boostFireHydrant || bodyB == boostHouse ||
-		bodyB == boostMask || bodyB == boostTermometer)
+
+	p2List_item<PhysBody*>* bumper = circles.getFirst();
+	while (bumper != NULL)
 	{
-		p2List_item<PhysBody*>* c = ballList.getFirst();
-		c->data->GetPosition(x, y);
-		if(y > y - 22) // radius of bouncers
+		if (bodyB == bumper->data)
 		{
-			if (x > x - 22)
-			{
-				//down right
-				c->data->body->SetLinearVelocity(b2Vec2(15, 15));
-				App->audio->PlayFx(bonus_fx);
-			}
-			else
-			{
-				//down left
-				c->data->body->SetLinearVelocity(b2Vec2(-15, 15));
-				App->audio->PlayFx(bonus_fx);
-			}
+			b2Vec2 force(bodyA->body->GetWorldCenter() - bodyB->body->GetWorldCenter());
+			force *= 3;
+			bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
+			App->audio->PlayFx(bonus_fx);
 		}
-		else
-		{
-			if (x > x - 22)
-			{
-				//up right
-				c->data->body->SetLinearVelocity(b2Vec2(15, -15));
-				App->audio->PlayFx(bonus_fx);
-			}
-			else
-			{
-				//up left
-				c->data->body->SetLinearVelocity(b2Vec2(-15, -15));
-				App->audio->PlayFx(bonus_fx);
-			}
-		}
-		
+		bumper = bumper->next;
 	}
+
 	if (bodyB == entryLevel && currentLvl == START)
 	{
-		UpdateLevel(FLOOR);
+		currentLvl = FLOOR;
 	}
-	if (bodyB == entrySlide && currentLvl == FLOOR)
+	if (bodyB == entrySlide)
 	{
-		UpdateLevel(SLIDE);
-	}
-	if (bodyB == entrySlide && currentLvl == SLIDE)
-	{
-		UpdateLevel(FLOOR);
+		currentLvl = SLIDE;
+		ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0, -50), b2Vec2(x, y), true);
 	}
 	if (bodyB == exitSlide && currentLvl == SLIDE)
 	{
-		UpdateLevel(FLOOR);
+		currentLvl = FLOOR;
 	}
-}
 
-void ModuleSceneIntro::UpdateLevel(Area lvlToChange)
-{
-	switch (lvlToChange)
+	if (bodyB == dieSensor)
 	{
-		case START:
-		{
-
-		}
-			break;
-		case FLOOR:
-		{
-			p2List_item<PhysBody*>* c = polligons.getFirst();
-
-			while (c != NULL)
-			{
-				if (currentLvl == START)
-				{
-					if (strcmp(c->data->name.GetString(), "Entrance") == 0)
-					{
-						c->data->body->SetActive(true);
-					}
-				}
-				else if (currentLvl == SLIDE)
-				{
-					if (strcmp(c->data->name.GetString(), "Slide") == 0)
-					{
-						c->data->body->SetActive(false);
-					}
-					else
-					{
-						c->data->body->SetActive(true);
-					}
-				}
-				c = c->next;
-			}
-
-			currentLvl = FLOOR;
-		}
-			break;
-		case SLIDE:
-		{
-			p2List_item<PhysBody*>* c = polligons.getFirst();
-
-			while(c != NULL)
-			{
-				if (strcmp(c->data->name.GetString(), "Slide") == 0)
-				{
-					c->data->body->SetActive(true);
-				}
-				else
-				{
-					c->data->body->SetActive(false);
-				}
-				c = c->next;
-			}
-
-			currentLvl = SLIDE;
-		}
-			break;
-		default:
-			break;
+		dead = true;
+		
+	}
+	if (bodyB == leftLifeSavour)
+	{
+		ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);
+		lBlock = true;
+	}
+	if (bodyB == rightLifeSavour)
+	{
+		ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);
+		rBlock = true;
 	}
 }
+

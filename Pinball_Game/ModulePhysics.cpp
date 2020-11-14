@@ -60,7 +60,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	world->Step(1.0f / 60.0f, 6, 2);
-
+	
 	for(b2Contact* c = world->GetContactList(); c; c = c->GetNext())
 	{
 		if(c->GetFixtureA()->IsSensor() && c->IsTouching())
@@ -176,7 +176,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, char* name)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
@@ -206,8 +206,12 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, char* 
 	pbody->body = b;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
-	pbody->name.Create(name);
 	return pbody;
+}
+
+b2World* ModulePhysics::GetWorld() const
+{
+	return world;
 }
 
 // 
