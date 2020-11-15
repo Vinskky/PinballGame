@@ -26,8 +26,9 @@ public:
 	//flippers
 	SDL_Rect flipperRight;
 	SDL_Rect flipperLeft;
-	SDL_Rect flipperRightUp;
 	SDL_Rect playerBall;
+	SDL_Rect leftLifeSaviour;
+	SDL_Rect rightLifeSaviour;
 
 	//background
 	SDL_Rect bgRect;
@@ -60,6 +61,8 @@ public:
 	SDL_Texture* rick;
 	SDL_Texture* background;
 	SDL_Texture* pinballSet;
+	SDL_Texture* LifeSaviour;
+
 	uint bonus_fx;
 	p2Point<int> ray;
 	bool ray_on;

@@ -28,9 +28,8 @@ bool ModuleSceneIntro::Start()
 
 	background = App->textures->Load("textures/background.png");
 	pinballSet = App->textures->Load("textures/pinballAssets2.png");
+	LifeSaviour = App->textures->Load("textures/lifeSaviours.png");
 	ball = App->textures->Load("textures/ball.png");
-	box = App->textures->Load("pinball/crate.png");
-	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
 	//die sensor
@@ -40,11 +39,6 @@ bool ModuleSceneIntro::Start()
 	bumperLeft->body->SetTransform(bumperLeft->body->GetPosition(), DEGTORAD * (-22));
 	bumperRight = App->physics->CreateRectangleSensor(355, 595, 5, 85);
 	bumperRight->body->SetTransform(bumperRight->body->GetPosition(), DEGTORAD * (22));
-	//circles boost sensor
-	/*boostFireHydrant = App->physics->CreateCircleSensor(208, 222, 23);
-	boostHouse = App->physics->CreateCircleSensor(279, 194, 23);
-	boostMask = App->physics->CreateCircleSensor(288, 265, 23);
-	boostTermometer = App->physics->CreateCircleSensor(203, 365, 23);*/
 	//level changer sensors
 	entryLevel = App->physics->CreateRectangleSensor(200, 78, 15, 15);
 	entrySlide = App->physics->CreateRectangleSensor(145, 350, 15, 15);
@@ -127,6 +121,9 @@ bool ModuleSceneIntro::Start()
 	flipperRight = { 102, 0, 88, 22 };
 	bgRect = { 0, 0, 533, 798 };
 	playerBall = { 0, 0, 24, 24 };
+	leftLifeSaviour = { 0, 0, 34, 65 };
+	rightLifeSaviour = { 37, 0, 34, 65 };
+
 	return ret;
 }
 
@@ -162,12 +159,12 @@ update_status ModuleSceneIntro::Update()
 		ray.y = App->input->GetMouseY();
 	}
 
-	/*if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		ballList.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 11));
 		ballList.getLast()->data->listener = this;
 		ballList.getLast()->data->body->SetBullet(true);
-	}*/
+	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
@@ -319,6 +316,12 @@ update_status ModuleSceneIntro::Update()
 		rBlock = false;
 		currentLvl = START;
 	}
+
+	if (lBlock)
+		App->renderer->Blit(LifeSaviour,46,667,&leftLifeSaviour);
+	if (rBlock)
+	App->renderer->Blit(LifeSaviour, 428, 667, &rightLifeSaviour);
+
 	return UPDATE_CONTINUE;
 }
 
