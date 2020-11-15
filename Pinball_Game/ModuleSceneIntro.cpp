@@ -405,21 +405,15 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	}
 	if (bodyB == leftLifeSavour)
 	{
-		/*ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);*/
-		b2Vec2 force(bodyA->body->GetWorldCenter() - bodyB->body->GetWorldCenter());
-		force *= 12;
-		bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
+		ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-7),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
 		lBlock = true;
 	}
 	if (bodyB == rightLifeSavour)
 	{
-		/*ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);*/
-		b2Vec2 force(bodyA->body->GetWorldCenter() - bodyB->body->GetWorldCenter());
-		force *= 12;
-		bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
+		ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-7),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
 		rBlock = true;
 	}
