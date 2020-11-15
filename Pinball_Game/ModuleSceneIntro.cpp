@@ -31,6 +31,7 @@ bool ModuleSceneIntro::Start()
 	LifeSaviour = App->textures->Load("textures/lifeSaviours.png");
 	ball = App->textures->Load("textures/ball.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	background_fx = App->audio->LoadFx("pinball/Off waves.wav");
 
 	//die sensor
 	dieSensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
@@ -144,6 +145,7 @@ bool ModuleSceneIntro::Start()
 	leftLifeSaviour = { 0, 0, 34, 65 };
 	rightLifeSaviour = { 37, 0, 34, 65 };
 
+	App->audio->PlayMusic("pinball/Off limits.wav",-1);
 	return ret;
 }
 

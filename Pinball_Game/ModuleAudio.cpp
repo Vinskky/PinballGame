@@ -42,6 +42,10 @@ bool ModuleAudio::Init()
 	{
 		LOG("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 		ret = true;
+	} 
+	else
+	{
+		Mix_VolumeMusic(10);
 	}
 
 	return ret;

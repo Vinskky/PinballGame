@@ -65,6 +65,7 @@ public:
 	SDL_Texture* LifeSaviour;
 
 	uint bonus_fx;
+	uint background_fx;
 	p2Point<int> ray;
 	bool ray_on;
 
