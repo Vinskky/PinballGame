@@ -469,6 +469,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		ballList.getLast()->data->GetPosition(x, y);
 		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-9),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
+		changelvl = true;
 		lBlock = true;
 	}
 	if (bodyB == rightLifeSavour)
@@ -476,6 +477,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		ballList.getLast()->data->GetPosition(x, y);
 		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-9),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
+		changelvl = true;
 		rBlock = true;
 	}
 }
