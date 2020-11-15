@@ -25,8 +25,10 @@ public:
 
 	//flippers
 	SDL_Rect flipperRight;
+	SDL_Rect flipperRightUp;
 	SDL_Rect flipperLeft;
 	SDL_Rect playerBall;
+	SDL_Rect spring;
 	SDL_Rect leftLifeSaviour;
 	SDL_Rect rightLifeSaviour;
 
@@ -58,7 +60,6 @@ public:
 
 	SDL_Texture* box;
 	SDL_Texture* ball;
-	SDL_Texture* rick;
 	SDL_Texture* background;
 	SDL_Texture* pinballSet;
 	SDL_Texture* LifeSaviour;

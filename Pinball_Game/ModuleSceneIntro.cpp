@@ -9,7 +9,7 @@
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	background = ball = box = rick = NULL;
+	background = ball = box = NULL;
 	ray_on = false;
 	sensed = false;
 	currentLvl = START;
@@ -59,6 +59,12 @@ bool ModuleSceneIntro::Start()
 	circles.add(App->physics->CreateCircle(314, 710, 5));
 	circles.getLast()->data->body->SetType(b2_staticBody);
 
+	boxes.add(App->physics->CreateRectangle(440, 298, 60, 9));
+	boxes.getLast()->data->listener = this;
+	boxes.getLast()->data->body->GetFixtureList()->SetDensity(3.0f);
+	circles.add(App->physics->CreateCircle(462, 298, 5));
+	circles.getLast()->data->body->SetType(b2_staticBody);
+
 	//Create Central Circles
 	circles.add(App->physics->CreateCircle(208, 222, 22));
 	circles.getLast()->data->body->SetType(b2_kinematicBody);
@@ -76,7 +82,7 @@ bool ModuleSceneIntro::Start()
 	boxes.getLast()->data->body->SetType(b2_staticBody);
 
 	//Start Spring
-	boxes.add(App->physics->CreateRectangle(497, 730, 35, 14));
+	boxes.add(App->physics->CreateRectangle(497, 750, 35, 14));
 	boxes.getLast()->data->body->SetType(b2_kinematicBody);
 
 	//ball
@@ -116,11 +122,25 @@ bool ModuleSceneIntro::Start()
 	revJoint_r.enableLimit = true;
 	b2RevoluteJoint* joint_r = (b2RevoluteJoint*)boxes.getFirst()->next->data->body->GetWorld()->CreateJoint(&revJoint_r);
 
+
+	b2RevoluteJointDef revJoint_r_up;
+	revJoint_r_up.bodyA = boxes.getFirst()->next->next->data->body;
+	revJoint_r_up.bodyB = circles.getFirst()->next->next->data->body;
+	revJoint_r_up.localAnchorA.Set(PIXEL_TO_METERS(45), PIXEL_TO_METERS(0));
+	revJoint_r_up.localAnchorB.Set(0, 0);
+	revJoint_r_up.lowerAngle = DEGTORAD * (-20);
+	revJoint_r_up.referenceAngle = 0;
+	revJoint_r_up.upperAngle = DEGTORAD * (60);
+	revJoint_r_up.enableLimit = true;
+	b2RevoluteJoint* joint_r_up = (b2RevoluteJoint*)boxes.getFirst()->next->next->data->body->GetWorld()->CreateJoint(&revJoint_r_up);
+
 	//SPRITE COORDINATES//
 	flipperLeft = { 0, 0, 88, 22 };
 	flipperRight = { 102, 0, 88, 22 };
+	flipperRightUp = { 0, 30, 70, 16 };
 	bgRect = { 0, 0, 533, 798 };
 	playerBall = { 0, 0, 24, 24 };
+	spring = { 84, 37, 27, 62 };
 	leftLifeSaviour = { 0, 0, 34, 65 };
 	rightLifeSaviour = { 37, 0, 34, 65 };
 
@@ -149,6 +169,7 @@ update_status ModuleSceneIntro::Update()
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		boxes.getFirst()->next->data->body->ApplyForceToCenter(b2Vec2(0, -500), 1);
+		boxes.getFirst()->next->next->data->body->ApplyForceToCenter(b2Vec2(0, -500), 1);
 	}
 
 
@@ -181,11 +202,11 @@ update_status ModuleSceneIntro::Update()
 		boxes.getLast()->data->body->SetLinearVelocity(b2Vec2(0, -20));
 
 	}
-	else if (boxes.getLast()->data->body->GetPosition().y > PIXEL_TO_METERS(750) || boxes.getLast()->data->body->GetPosition().y < PIXEL_TO_METERS(730))
+	else if (boxes.getLast()->data->body->GetPosition().y > PIXEL_TO_METERS(770) || boxes.getLast()->data->body->GetPosition().y < PIXEL_TO_METERS(750))
 	{
-		if (boxes.getLast()->data->body->GetPosition().y < PIXEL_TO_METERS(730))
+		if (boxes.getLast()->data->body->GetPosition().y < PIXEL_TO_METERS(750))
 		{
-			boxes.getLast()->data->body->SetTransform({ boxes.getLast()->data->body->GetPosition().x, PIXEL_TO_METERS(730) }, boxes.getLast()->data->body->GetAngle());
+			boxes.getLast()->data->body->SetTransform({ boxes.getLast()->data->body->GetPosition().x, PIXEL_TO_METERS(750) }, boxes.getLast()->data->body->GetAngle());
 		}
 
 		boxes.getLast()->data->body->SetLinearVelocity(b2Vec2(0, 0));
@@ -198,7 +219,14 @@ update_status ModuleSceneIntro::Update()
 	PhysBody* flipperr = boxes.getFirst()->next->data;
 	flipperr->GetPosition(x, y);
 	App->renderer->Blit(pinballSet, x-10, y , &flipperRight, 1.0f, (flipperr->GetRotation()));
+	PhysBody* flipperrUp = boxes.getFirst()->next->next->data;
+	flipperrUp->GetPosition(x, y);
+	App->renderer->Blit(pinballSet, x, y-5 , &flipperRightUp, 1.0f, (flipperrUp->GetRotation()));
 
+	//Draw Spring
+	PhysBody* springR = boxes.getLast()->data;
+	springR->GetPosition(x, y);
+	App->renderer->Blit(pinballSet, x+3, y, &spring, 1.0f);
 	// Prepare for raycast ------------------------------------------------------
 	
 	iPoint mouse;
@@ -377,14 +405,22 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	}
 	if (bodyB == leftLifeSavour)
 	{
-		ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);
+		/*ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);*/
+		b2Vec2 force(bodyA->body->GetWorldCenter() - bodyB->body->GetWorldCenter());
+		force *= 12;
+		bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
+		App->audio->PlayFx(bonus_fx);
 		lBlock = true;
 	}
 	if (bodyB == rightLifeSavour)
 	{
-		ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);
+		/*ballList.getLast()->data->GetPosition(x, y);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-15),b2Vec2(x,y), true);*/
+		b2Vec2 force(bodyA->body->GetWorldCenter() - bodyB->body->GetWorldCenter());
+		force *= 12;
+		bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
+		App->audio->PlayFx(bonus_fx);
 		rBlock = true;
 	}
 }
