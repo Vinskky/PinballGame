@@ -1,4 +1,6 @@
 #include "Globals.h"
+#include <iostream>
+#include <string>
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleSceneIntro.h"
@@ -6,6 +8,7 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModuleFonts.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -32,6 +35,7 @@ bool ModuleSceneIntro::Start()
 	ball = App->textures->Load("textures/ball.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	background_fx = App->audio->LoadFx("pinball/Off waves.wav");
+	font = App->fonts->Load("textures/Fonts.png", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
 
 	//die sensor
 	dieSensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
@@ -195,11 +199,11 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	//Spring
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN )
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN && springActive)
 	{
 		boxes.getLast()->data->body->SetLinearVelocity(b2Vec2(0, 1));
 	}
-	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
+	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP && springActive)
 	{
 		boxes.getLast()->data->body->SetLinearVelocity(b2Vec2(0, -20));
 
@@ -352,6 +356,42 @@ update_status ModuleSceneIntro::Update()
 	if (rBlock)
 	App->renderer->Blit(LifeSaviour, 428, 667, &rightLifeSaviour);
 
+	//Lose screen
+	if (lives == 0)
+	{
+		if (score > hScore)
+		{
+			hScore = score;
+		}
+		App->renderer->DrawQuad({ SCREEN_WIDTH / 6, SCREEN_HEIGHT / 4,  380, 380 }, 0, 0, 0, 200);
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 4 + 30, font, "CURRENT SCORE");
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 45, SCREEN_HEIGHT / 4 + 65, font, std::to_string(score).c_str());
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 2 - 40, font, "PREVIOUS SCORE");
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 45, SCREEN_HEIGHT / 2 - 5, font, std::to_string(prevScore).c_str());
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 2 + 70, font, "HIGHEST SCORE");
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 85, SCREEN_HEIGHT / 2 + 120, font, std::to_string(hScore).c_str());
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 70, SCREEN_HEIGHT / 2 + 185, font, "PRESS R");
+		//add spring cant be activate
+		springActive = false;
+
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		{
+			prevScore = score;
+			score = 0;
+			lives = 3;
+			springActive = true;
+			dead = false;
+		}
+	}
+
+	//UI
+	App->fonts->BlitText(5, SCREEN_HEIGHT - 30, font, std::to_string(score).c_str());
+	App->fonts->BlitText(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 30, font, std::to_string(lives).c_str());
+	App->fonts->BlitText(SCREEN_WIDTH - 200, SCREEN_HEIGHT - 30, font, "LIVES ");
+	//App->renderer->Blit(pinball, 335, 620, &lifeball);*/
+
+
+
 	return UPDATE_CONTINUE;
 }
 
@@ -364,12 +404,14 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		p2List_item<PhysBody*>* c = ballList.getFirst();
 		c->data->body->SetLinearVelocity(b2Vec2(22, -22));
 		App->audio->PlayFx(bonus_fx);
+		score += 100;
 	}
 	if (bodyB == bumperRight)
 	{
 		p2List_item<PhysBody*>* c = ballList.getFirst();
 		c->data->body->SetLinearVelocity(b2Vec2(-22, -22));
 		App->audio->PlayFx(bonus_fx);
+		score += 100;
 	}
 
 	p2List_item<PhysBody*>* bumper = circles.getFirst();
@@ -381,6 +423,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			force *= 3;
 			bodyA->body->ApplyLinearImpulse(force, bodyA->body->GetWorldCenter(), true);
 			App->audio->PlayFx(bonus_fx);
+			score += 100;
 		}
 		bumper = bumper->next;
 	}
@@ -391,6 +434,8 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	}
 	if (bodyB == entrySlide)
 	{
+		if(currentLvl == FLOOR) // avoid adding extra points when boosting again
+			score += 300;
 		currentLvl = SLIDE;
 		ballList.getLast()->data->GetPosition(x, y);
 		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0, -50), b2Vec2(x, y), true);
@@ -403,19 +448,19 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	if (bodyB == dieSensor)
 	{
 		dead = true;
-		
+		lives--;
 	}
 	if (bodyB == leftLifeSavour)
 	{
 		ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-7),b2Vec2(x,y), true);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-9),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
 		lBlock = true;
 	}
 	if (bodyB == rightLifeSavour)
 	{
 		ballList.getLast()->data->GetPosition(x, y);
-		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-7),b2Vec2(x,y), true);
+		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0,-9),b2Vec2(x,y), true);
 		App->audio->PlayFx(bonus_fx);
 		rBlock = true;
 	}

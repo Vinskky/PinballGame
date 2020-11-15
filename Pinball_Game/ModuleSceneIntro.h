@@ -56,7 +56,12 @@ public:
 	bool dead = false;
 	bool lBlock = false;
 	bool rBlock = false;
+	bool springActive = true;
 	int lives = 3;
+	int font; 
+	int score;
+	int prevScore;
+	int hScore;
 
 	SDL_Texture* box;
 	SDL_Texture* ball;
