@@ -15,7 +15,7 @@ Pinball game developed for the subject physics II during the course 2020-2021 us
 
  - Sebastián Delgado - [Github](https://github.com/Vinskky)
  - Adrià Belmonte - [Github](https://github.com/Croaco)
-
+ - [Project Github](https://github.com/Vinskky/PinballGame)
 
 ## Original Game:
 
