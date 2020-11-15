@@ -1,4 +1,4 @@
-# PinballGame
+# Fireman Pinball
 Pinball game developed for the subject physics II during the course 2020-2021 using Box2D library.
  
 ## Controls
