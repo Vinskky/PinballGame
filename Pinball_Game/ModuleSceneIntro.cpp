@@ -149,7 +149,7 @@ bool ModuleSceneIntro::Start()
 	leftLifeSaviour = { 0, 0, 34, 65 };
 	rightLifeSaviour = { 37, 0, 34, 65 };
 
-	App->audio->PlayMusic("pinball/Off limits.wav",-1);
+	App->audio->PlayMusic("pinball/Off limits.wav");
 	return ret;
 }
 
@@ -292,53 +292,58 @@ update_status ModuleSceneIntro::Update()
 			App->renderer->DrawLine(ray.x + destination.x, ray.y + destination.y, ray.x + destination.x + normal.x * 25.0f, ray.y + destination.y + normal.y * 25.0f, 100, 255, 100);
 	}
 
-	
-	if (currentLvl == START)
+	if (changelvl)
 	{
-		int num = polligons.count();
-		for (int i = 0; i < num; i++)
+		if (currentLvl == START)
 		{
-			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
-			polligons.del(polligons.getLast());
+			int num = polligons.count();
+			for (int i = 0; i < num; i++)
+			{
+				polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+				polligons.del(polligons.getLast());
+			}
+			polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
+			polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
+			polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
+			polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+			polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
+			polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
 		}
-		polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
-		polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
-		polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
-		polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
-		polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
-		polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
-	}
-	else if(currentLvl == FLOOR)
-	{
-		int num = polligons.count();
-		for (int i = 0; i < num; i++)
+		else if (currentLvl == FLOOR)
 		{
-			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
-			polligons.del(polligons.getLast());
-		}
-		polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
-		polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
-		polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
-		polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
-		polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
-		polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
-		polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14));
-		if(lBlock)
-			polligons.add(App->physics->CreateChain(0, 0, leftBlock, 8));
-		if(rBlock)
-			polligons.add(App->physics->CreateChain(0, 0, rightBlock, 8));
+			int num = polligons.count();
+			for (int i = 0; i < num; i++)
+			{
+				polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+				polligons.del(polligons.getLast());
+			}
+			polligons.add(App->physics->CreateChain(0, 0, outsideBounds, 112));
+			polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
+			polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
+			polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+			polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
+			polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
+			polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14));
+			if (lBlock)
+				polligons.add(App->physics->CreateChain(0, 0, leftBlock, 8));
+			if (rBlock)
+				polligons.add(App->physics->CreateChain(0, 0, rightBlock, 8));
 
-	}
-	else if (currentLvl == SLIDE)
-	{
-		int num = polligons.count();
-		for (int i = 0; i < num; i++)
-		{
-			polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
-			polligons.del(polligons.getLast());
 		}
-		polligons.add(App->physics->CreateChain(0, 0, slide, 92));
+		else if (currentLvl == SLIDE)
+		{
+			int num = polligons.count();
+			for (int i = 0; i < num; i++)
+			{
+				polligons.getLast()->data->body->GetWorld()->DestroyBody(polligons.getLast()->data->body);
+				polligons.del(polligons.getLast());
+			}
+			polligons.add(App->physics->CreateChain(0, 0, slide, 92));
+		}
+
+		changelvl = false;
 	}
+	
 
 	if (dead)
 	{
@@ -348,13 +353,14 @@ update_status ModuleSceneIntro::Update()
 		dead = false;
 		lBlock = false;
 		rBlock = false;
+		changelvl = true;
 		currentLvl = START;
 	}
 
 	if (lBlock)
 		App->renderer->Blit(LifeSaviour,46,667,&leftLifeSaviour);
 	if (rBlock)
-	App->renderer->Blit(LifeSaviour, 428, 667, &rightLifeSaviour);
+		App->renderer->Blit(LifeSaviour, 428, 667, &rightLifeSaviour);
 
 	//Lose screen
 	if (lives == 0)
@@ -388,8 +394,6 @@ update_status ModuleSceneIntro::Update()
 	App->fonts->BlitText(5, SCREEN_HEIGHT - 30, font, std::to_string(score).c_str());
 	App->fonts->BlitText(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 30, font, std::to_string(lives).c_str());
 	App->fonts->BlitText(SCREEN_WIDTH - 200, SCREEN_HEIGHT - 30, font, "LIVES ");
-	//App->renderer->Blit(pinball, 335, 620, &lifeball);*/
-
 
 
 	return UPDATE_CONTINUE;
@@ -430,23 +434,29 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	if (bodyB == entryLevel && currentLvl == START)
 	{
+		changelvl = true;
 		currentLvl = FLOOR;
 	}
 	if (bodyB == entrySlide)
 	{
-		if(currentLvl == FLOOR) // avoid adding extra points when boosting again
+		if (currentLvl == FLOOR)// avoid adding extra points when boosting again
+		{
 			score += 300;
+			changelvl = true;
+		}
 		currentLvl = SLIDE;
 		ballList.getLast()->data->GetPosition(x, y);
 		ballList.getLast()->data->body->ApplyLinearImpulse(b2Vec2(0, -50), b2Vec2(x, y), true);
 	}
 	if (bodyB == exitSlide && currentLvl == SLIDE)
 	{
+		changelvl = true;
 		currentLvl = FLOOR;
 	}
 
 	if (bodyB == dieSensor)
 	{
+		changelvl = true;
 		dead = true;
 		lives--;
 	}

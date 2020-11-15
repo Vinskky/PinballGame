@@ -53,6 +53,7 @@ public:
 	PhysBody* rightLifeSavour;
 	
 	bool sensed;
+	bool changelvl = false;
 	bool dead = false;
 	bool lBlock = false;
 	bool rBlock = false;
