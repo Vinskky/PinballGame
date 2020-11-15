@@ -5,6 +5,7 @@ Pinball game developed for the subject physics II during the course 2020-2021 us
 
  - Left arrow: Moves left flipper
  - Right arrow: Moves both right flippers 
+ - Down arrow: Activates kicker
  
 ## Debug keys
  
