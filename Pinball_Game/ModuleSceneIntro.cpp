@@ -101,6 +101,7 @@ bool ModuleSceneIntro::Start()
 	polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
 	polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
 	polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+	polligons.add(App->physics->CreateChain(0, 0, middleTriangle, 10));
 	polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
 	polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
 
@@ -306,6 +307,7 @@ update_status ModuleSceneIntro::Update()
 			polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
 			polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
 			polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+			polligons.add(App->physics->CreateChain(0, 0, middleTriangle, 10));
 			polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
 			polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
 		}
@@ -321,6 +323,7 @@ update_status ModuleSceneIntro::Update()
 			polligons.add(App->physics->CreateChain(0, 0, innerBound, 90));
 			polligons.add(App->physics->CreateChain(0, 0, bouncerLeft, 18));
 			polligons.add(App->physics->CreateChain(0, 0, bouncerRight, 16));
+			polligons.add(App->physics->CreateChain(0, 0, middleTriangle, 10));
 			polligons.add(App->physics->CreateChain(0, 0, LLeft, 26));
 			polligons.add(App->physics->CreateChain(0, 0, LRight, 28));
 			polligons.add(App->physics->CreateChain(0, 0, closeEntrance, 14));
@@ -339,6 +342,7 @@ update_status ModuleSceneIntro::Update()
 				polligons.del(polligons.getLast());
 			}
 			polligons.add(App->physics->CreateChain(0, 0, slide, 92));
+			polligons.add(App->physics->CreateChain(0, 0, blockFlipper, 10));
 		}
 
 		changelvl = false;
@@ -369,14 +373,14 @@ update_status ModuleSceneIntro::Update()
 		{
 			hScore = score;
 		}
-		App->renderer->DrawQuad({ SCREEN_WIDTH / 6, SCREEN_HEIGHT / 4,  380, 380 }, 0, 0, 0, 200);
+		App->renderer->DrawQuad({ SCREEN_WIDTH / 6, SCREEN_HEIGHT / 4,  380, 420 }, 0, 0, 0, 200);
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 4 + 30, font, "CURRENT SCORE");
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 45, SCREEN_HEIGHT / 4 + 65, font, std::to_string(score).c_str());
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 2 - 40, font, "PREVIOUS SCORE");
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 45, SCREEN_HEIGHT / 2 - 5, font, std::to_string(prevScore).c_str());
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 30, SCREEN_HEIGHT / 2 + 70, font, "HIGHEST SCORE");
 		App->fonts->BlitText(SCREEN_WIDTH / 6 + 85, SCREEN_HEIGHT / 2 + 120, font, std::to_string(hScore).c_str());
-		App->fonts->BlitText(SCREEN_WIDTH / 6 + 70, SCREEN_HEIGHT / 2 + 185, font, "PRESS R");
+		App->fonts->BlitText(SCREEN_WIDTH / 6 + 70, SCREEN_HEIGHT / 2 + 185, font, "PRESS R TO TRY AGAIN");
 		//add spring cant be activate
 		springActive = false;
 
@@ -393,7 +397,7 @@ update_status ModuleSceneIntro::Update()
 	//UI
 	App->fonts->BlitText(5, SCREEN_HEIGHT - 30, font, std::to_string(score).c_str());
 	App->fonts->BlitText(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 30, font, std::to_string(lives).c_str());
-	App->fonts->BlitText(SCREEN_WIDTH - 200, SCREEN_HEIGHT - 30, font, "LIVES ");
+	App->fonts->BlitText(SCREEN_WIDTH - 180, SCREEN_HEIGHT - 30, font, "LIVES ");
 
 
 	return UPDATE_CONTINUE;
