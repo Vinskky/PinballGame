@@ -27,5 +27,8 @@ Pinball game developed for the subject physics II during the course 2020-2021 us
 - Music and FX are differents.
 - No animations.
 - No combos.
-- No changes of levels.
+- No changes of scenes.
 
+### Known bugs
+
+- Sometimes game crashes in debug mode(F1 enabled). We think it's because we are destroying pollygons and creating them to make changes on game for the map.
